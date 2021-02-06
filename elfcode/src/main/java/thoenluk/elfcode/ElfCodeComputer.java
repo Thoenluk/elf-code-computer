@@ -34,7 +34,6 @@ public class ElfCodeComputer {
     
     private int ip = 0;
     private int acc = 0;
-    int[] args;
     private final ArrayList<Line> program = new ArrayList<>();
     private final HashSet<Integer> visitedLines = new HashSet<>();
     private final HashMap<Integer, Integer> memory = new HashMap<>();
