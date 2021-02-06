@@ -35,8 +35,7 @@ public class ElfCodeComputer {
     private int ip = 0;
     private int acc = 0;
     int[] args;
-    private final ArrayList<Instruction> program = new ArrayList<>();
-    private final ArrayList<String[]> inputs = new ArrayList<>();
+    private final ArrayList<Line> program = new ArrayList<>();
     private final HashSet<Integer> visitedLines = new HashSet<>();
     private final HashMap<Integer, Integer> memory = new HashMap<>();
     private final HashMap<Integer, Integer> functions = new HashMap<>();
@@ -48,22 +47,14 @@ public class ElfCodeComputer {
         String[] instructionSet;
         for(String line : programDescription) {
             if(line.length() == 0) {
-                program.add(Instruction.nop);
-                inputs.add(new String[0]);
+                program.add(new Line("NOP"));
             } else {
                 instructionSet = line.split(" ");
-                if(instructionSet.length == 1) {
-                    if(instructionSet[0].equals("BRK")) {
-                        program.add(Instruction.brk);
-                        inputs.add(new String[0]);
-                    } else {
-                        functions.put(Ut.cachedParseInt(instructionSet[0].substring(0, instructionSet[0].length() - 1)), ip);
-                        program.add(Instruction.nop);
-                        inputs.add(new String[0]);
-                    }
+                if(instructionSet.length == 1 && Ut.betterCharAt(instructionSet[0], -1) == ':') {
+                    functions.put(Ut.cachedParseInt(instructionSet[0].substring(0, instructionSet[0].length() - 1)), ip);
+                    program.add(new Line("NOP"));
                 } else {
-                    program.add(Instruction.valueOf(instructionSet[0].toLowerCase()));
-                    inputs.add(Arrays.copyOfRange(instructionSet, 1, instructionSet.length));
+                    program.add(new Line(instructionSet[0], Arrays.copyOfRange(instructionSet, 1, instructionSet.length)));
                 }
             }
             ip++;
@@ -77,15 +68,8 @@ public class ElfCodeComputer {
      * method may have you stuck in an infinite loop, but we consciously don't check.
      */
     public void runProgram() {
-        String[] input;
-        int i;
         while(ipIsValid()) {
-            input = inputs.get(ip);
-            args = new int[input.length];
-            for(i = 0; i < input.length; i++) {
-                args[i] = resolve(input[i]);
-            }
-            program.get(ip).code.accept(args, this);
+            program.get(ip).execute(this);
             ip++;
         }
     }
@@ -96,14 +80,8 @@ public class ElfCodeComputer {
      * Eat your heart out, Turing!
      */
     public boolean runProgramUntilLoop() {
-        String[] input;
-        int i;
         while(!isLooping() && ipIsValid()) {
-            input = inputs.get(ip);
-            for(i = 0; i < input.length; i++) {
-                args[i] = resolve(input[i]);
-            }
-            program.get(ip).code.accept(args, this);
+            program.get(ip).execute(this);
             ip++;
         }
         return !ipIsValid();
@@ -117,7 +95,7 @@ public class ElfCodeComputer {
         return !visitedLines.add(ip);
     }
     
-    private int resolve(String directOrReference) {
+    protected int resolve(String directOrReference) {
         switch(directOrReference.charAt(0)) {
             case 'A':
                 // ACC
