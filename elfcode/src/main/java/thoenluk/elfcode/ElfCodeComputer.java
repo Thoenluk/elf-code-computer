@@ -53,9 +53,14 @@ public class ElfCodeComputer {
             } else {
                 instructionSet = line.split(" ");
                 if(instructionSet.length == 1) {
-                    functions.put(Ut.cachedParseInt(instructionSet[0].substring(0, instructionSet[0].length() - 1)), ip);
-                    program.add(Instruction.nop);
-                    inputs.add(new String[0]);
+                    if(instructionSet[0].equals("BRK")) {
+                        program.add(Instruction.brk);
+                        inputs.add(new String[0]);
+                    } else {
+                        functions.put(Ut.cachedParseInt(instructionSet[0].substring(0, instructionSet[0].length() - 1)), ip);
+                        program.add(Instruction.nop);
+                        inputs.add(new String[0]);
+                    }
                 } else {
                     program.add(Instruction.valueOf(instructionSet[0].toLowerCase()));
                     inputs.add(Arrays.copyOfRange(instructionSet, 1, instructionSet.length));
@@ -118,7 +123,7 @@ public class ElfCodeComputer {
                 return acc;
             case 'I':
                 // IPT
-                return readInput();
+                return directOrReference.charAt(1) == 'P' ? ip : readInput();
             case 'R':
                 // Register reference
                 return Ut.getOrDefault(memory, Ut.cachedParseInt(directOrReference.substring(1)), ZERO_PROVIDER);
@@ -181,5 +186,16 @@ public class ElfCodeComputer {
     
     protected void callFunction(int descriptor) {
         setIp(functions.get(descriptor) - 1);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("IP: ").append(ip).append("\n");
+        sb.append("MEM: ").append(memory.toString()).append("\n");
+        sb.append("IPT: ").append(inputBuffer.toString()).append("\n");
+        sb.append("OPT: ").append(outputBuffer.toString()).append("\n");
+        sb.append("STK: ").append(stack.toString()).append("\n");
+        return sb.toString();
     }
 }

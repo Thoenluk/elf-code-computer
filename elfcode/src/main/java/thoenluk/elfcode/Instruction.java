@@ -16,6 +16,8 @@
  */
 package thoenluk.elfcode;
 
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.function.BiConsumer;
 
 /**
@@ -28,6 +30,9 @@ public enum Instruction {
         target.setAcc(target.getAcc() + args[0]);
     }),
     jmp((int[] args, ElfCodeComputer target) -> {
+       target.setIp(args[0] - 1);
+    }),
+    jrl((int[] args, ElfCodeComputer target) -> {
         target.setIp(target.getIp() + args[0] - 1);
     }),
     jif((int[] args, ElfCodeComputer target) -> {
@@ -70,10 +75,20 @@ public enum Instruction {
     }),
     cal((int[] args, ElfCodeComputer target) -> {
         target.callFunction(args[0]);
+    }),
+    brk((int[] args, ElfCodeComputer target) -> {
+        System.out.println(target.toString());
+        try {
+            System.in.read();
+        } catch(IOException io) {
+            System.out.println("oh noes");
+            io.printStackTrace();
+        }
     });
 
-    public final BiConsumer<int[], ElfCodeComputer> code;
 
+    public final BiConsumer<int[], ElfCodeComputer> code;
+    
     private Instruction(BiConsumer<int[], ElfCodeComputer> code) {
         this.code = code;
     }
