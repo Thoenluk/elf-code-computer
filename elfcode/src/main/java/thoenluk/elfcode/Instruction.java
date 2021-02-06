@@ -40,6 +40,11 @@ public enum Instruction {
             target.setIp(args[1]);
         }
     }),
+    jir((int[] args, ElfCodeComputer target) -> {
+        if(args[0] > 0) {
+            target.setIp(target.getIp() + args[1] - 1);
+        }
+    }),
     mov((int[] args, ElfCodeComputer target) -> {
         target.setMemory(args[0], args[1]);
     }),
@@ -77,12 +82,17 @@ public enum Instruction {
         target.callFunction(args[0]);
     }),
     brk((int[] args, ElfCodeComputer target) -> {
-        System.out.println(target.toString());
+        if(args.length == 0) {
+            System.out.println(target.toString());
+        } else {
+            for(Integer register : args) {
+                System.out.println("MEM #" + register + " = " + target.readMemory(register));
+            }
+        }
         try {
             System.in.read();
         } catch(IOException io) {
             System.out.println("oh noes");
-            io.printStackTrace();
         }
     });
 

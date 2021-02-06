@@ -34,7 +34,7 @@ public class ElfCodeComputer {
     
     private int ip = 0;
     private int acc = 0;
-    int[] args = new int[3];
+    int[] args;
     private final ArrayList<Instruction> program = new ArrayList<>();
     private final ArrayList<String[]> inputs = new ArrayList<>();
     private final HashSet<Integer> visitedLines = new HashSet<>();
@@ -81,6 +81,7 @@ public class ElfCodeComputer {
         int i;
         while(ipIsValid()) {
             input = inputs.get(ip);
+            args = new int[input.length];
             for(i = 0; i < input.length; i++) {
                 args[i] = resolve(input[i]);
             }
