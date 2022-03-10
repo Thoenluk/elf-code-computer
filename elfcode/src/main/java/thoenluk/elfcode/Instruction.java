@@ -26,18 +26,12 @@ import java.util.function.BiConsumer;
  */
 public enum Instruction {
     nop((int[] args, ElfCodeComputer target) -> {}),
-    acc((int[] args, ElfCodeComputer target) -> {
-        target.setAcc(target.getAcc() + args[0]);
-    }),
-    jmp((int[] args, ElfCodeComputer target) -> {
-       target.setIp(args[0] - 1);
-    }),
-    jrl((int[] args, ElfCodeComputer target) -> {
-        target.setIp(target.getIp() + args[0] - 1);
-    }),
+    acc((int[] args, ElfCodeComputer target) -> target.setAcc(target.getAcc() + args[0])),
+    jmp((int[] args, ElfCodeComputer target) -> target.setIp(args[0] - 1)),
+    jrl((int[] args, ElfCodeComputer target) -> target.setIp(target.getIp() + args[0] - 1)),
     jif((int[] args, ElfCodeComputer target) -> {
         if(args[0] > 0) {
-            target.setIp(args[1]);
+            target.setIp(args[1] - 1);
         }
     }),
     jir((int[] args, ElfCodeComputer target) -> {
@@ -45,42 +39,18 @@ public enum Instruction {
             target.setIp(target.getIp() + args[1] - 1);
         }
     }),
-    mov((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1]);
-    }),
-    prt((int[] args, ElfCodeComputer target) -> {
-        System.out.print(args[0]);
-    }),
-    prc((int[] args, ElfCodeComputer target) -> {
-        System.out.print((char) args[0]);
-    }),
-    psh((int[] args, ElfCodeComputer target) -> {
-        target.push(args[0]);
-    }),
-    pop((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], target.pop());
-    }),
-    add((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] + args[2]);
-    }),
-    sub((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] - args[2]);
-    }),
-    mul((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] * args[2]);
-    }),
-    div((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] / args[2]);
-    }),
-    lsh((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] << args[2]);
-    }),
-    rsh((int[] args, ElfCodeComputer target) -> {
-        target.setMemory(args[0], args[1] >> args[2]);
-    }),
-    cal((int[] args, ElfCodeComputer target) -> {
-        target.callFunction(args[0]);
-    }),
+    mov((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1])),
+    prt((int[] args, ElfCodeComputer target) -> System.out.print(args[0])),
+    prc((int[] args, ElfCodeComputer target) -> System.out.print((char) args[0])),
+    psh((int[] args, ElfCodeComputer target) -> target.push(args[0])),
+    pop((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], target.pop())),
+    add((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] + args[2])),
+    sub((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] - args[2])),
+    mul((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] * args[2])),
+    div((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] / args[2])),
+    lsh((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] << args[2])),
+    rsh((int[] args, ElfCodeComputer target) -> target.setMemory(args[0], args[1] >> args[2])),
+    cal((int[] args, ElfCodeComputer target) -> target.callFunction(args[0])),
     brk((int[] args, ElfCodeComputer target) -> {
         if(args.length == 0) {
             System.out.println(target.toString());
@@ -99,7 +69,7 @@ public enum Instruction {
 
     public final BiConsumer<int[], ElfCodeComputer> code;
     
-    private Instruction(BiConsumer<int[], ElfCodeComputer> code) {
+    Instruction(BiConsumer<int[], ElfCodeComputer> code) {
         this.code = code;
     }
 }
