@@ -4,7 +4,7 @@ An interpreter and runtime environment for a mostly-assembly-like language runni
 
 ## Usage:
 
-Write yer code in a text file, then run ECCRunner.java (or provide your code in a String[] to ElfCodeComputer's constructor, with each line being an item in the array) and watch the fireworks.
+Write yer code in a text file, then run ECCRunner.java (or provide your code in a String[] to ElfCodeComputer's constructor, with each line being an item in the array) and watch the fireworks. See test.txt for an example.
 
 Each instruction must be on its own separate line. Blank lines may be used, but contribute to line count. Each line must be one instruction named followed by a list of arguments.
 
