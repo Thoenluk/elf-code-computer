@@ -16,7 +16,6 @@
  */
 package thoenluk.elfcode;
 
-import thoenluk.utility.DefaultValueProvider;
 import thoenluk.utility.Ut;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,13 +23,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Stack;
+import java.util.function.Supplier;
 
 /**
  *
  * @author Lukas Thöni lukas.thoeni@gmx.ch
  */
 public class ElfCodeComputer {    
-    private static final DefaultValueProvider<Integer> ZERO_PROVIDER = () -> { return 0; };
+    private static final Supplier<Integer> ZERO_PROVIDER = () -> 0;
     
     private int ip = 0;
     private int acc = 0;
@@ -40,7 +40,7 @@ public class ElfCodeComputer {
     private final HashMap<Integer, Integer> functions = new HashMap<>();
     private final LinkedList<Integer> inputBuffer = new LinkedList<>();
     private final LinkedList<Integer> outputBuffer = new LinkedList<>();
-    private final Stack<Integer> stack = new Stack();
+    private final Stack<Integer> stack = new Stack<>();
     
     public ElfCodeComputer(String[] programDescription) {
         String[] instructionSet;
@@ -168,12 +168,10 @@ public class ElfCodeComputer {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("IP: ").append(ip).append("\n");
-        sb.append("MEM: ").append(memory.toString()).append("\n");
-        sb.append("IPT: ").append(inputBuffer.toString()).append("\n");
-        sb.append("OPT: ").append(outputBuffer.toString()).append("\n");
-        sb.append("STK: ").append(stack.toString()).append("\n");
-        return sb.toString();
+        return "IP: " + ip + "\n" +
+                "MEM: " + memory + "\n" +
+                "IPT: " + inputBuffer + "\n" +
+                "OPT: " + outputBuffer + "\n" +
+                "STK: " + stack + "\n";
     }
 }
