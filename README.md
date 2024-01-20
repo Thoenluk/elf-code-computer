@@ -17,7 +17,7 @@ Arguments may be:
 * STK for the top value of the stack, which will be popped and thus removed when read.
 
 You may define functions by writing labels into a separate line like:
-  <n>:
+  n:
 Where n is any integer value. These serve as markers to jump to regardless of actual line number. See CAL below for how to jump to these markers.
     
 ## Available instructions:
